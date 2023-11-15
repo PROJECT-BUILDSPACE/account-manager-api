@@ -1,0 +1,11 @@
+flask
+Flask-Pydantic
+Flask-OIDC
+flask-cors
+flask-restx
+flask-swagger-ui
+requests
+pydantic
+PyJWT
+cryptography
+httplib2

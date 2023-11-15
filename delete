@@ -1,0 +1,19 @@
+/group
+
+    /
+    post -> create group
+
+    /<group-id>
+    delete -> delete group
+
+    /my-groups
+    get -> fetch ser groups
+
+
+/role
+
+    /group-admin
+
+        /<group-id>
+        get -> get admins of group
+        put -> update admins of group

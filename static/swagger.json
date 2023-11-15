@@ -1,0 +1,406 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a swagger for the API that was developed as an account manager in the context of the BUILDSPACE project.",
+        "title": "BUILSPACE Account Manger Swagger API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "BUILDSPACE Core Platform Support",
+            "url": "http://www.swagger.io/support",
+            "email": "isotiropoulos@singularlogic.eu"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "basePath": "/",
+    "paths": {
+        "/group/": {
+            "post": {
+                "description": "Create a new group.",
+                "parameters": [
+                    {
+                        "description": "Required body of type Group. Fields 'name' and 'path' are the required in contrast to 'id', 'attributes' and 'subGroups' which can be omitted",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Group"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    }
+                },
+                "operationId": "create_group",
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ]
+            },
+            "get": {
+                "description": "Method to fetch all groups of user. No Parameters.",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "operationId": "get_all_groups",
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ]
+            }
+        },
+        "/group/{group_id}": {
+            "parameters": [
+                {
+                    "name": "group_id",
+                    "description": "ID of the reffering group.",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "post": {
+                "description": "Join user in a new group.",
+                "parameters": [
+                    {
+                        "description": "List of objects where keys are user IDs and values are booleans indicating whether users shall be admins or not. This array shal be under the 'users' key.",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/JoinGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "operationId": "join_group",
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ]
+            },
+            "delete": {
+                "description": "Delete group",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    }
+                },
+                "operationId": "delete_group",
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "group"
+                ]
+            }
+        },
+        "/role/group-admin/{group_id}": {
+            "parameters": [
+                {
+                    "name": "group_id",
+                    "description": "ID of the group of interest for the admin roles.",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "put": {
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/RoleUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "operationId": "put_main_class",
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "role"
+                ]
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    }
+                },
+                "operationId": "get_main_class",
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "role"
+                ]
+            }
+        },
+        "/user/{user_id}": {
+            "parameters": [
+                {
+                    "name": "user_id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "put": {
+                "description": "Change user's password",
+                "parameters": [
+                    {
+                        "description": "Provide an object with key 'password' and value the actual password.",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "type": "object"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "operationId": "change_password",
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            },
+            "get": {
+                "description": "Get user's data",
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    }
+                },
+                "operationId": "get_user_data",
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            }
+        }
+    },
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "Authorization"
+        }
+    },
+    "tags": [
+        {
+            "name": "group"
+        },
+        {
+            "name": "role"
+        },
+        {
+            "name": "user"
+        }
+    ],
+    "responses": {
+        "ParseError": {
+            "description": "When a mask can't be parsed"
+        },
+        "MaskError": {
+            "description": "When any error occurs on mask"
+        }
+    },
+    "definitions": {
+        "Group": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "Groups's id",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Groups's name",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "Groups's path",
+                    "type": "string"
+                },
+                "subGroups": {
+                    "description": "Nested subGroups",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "attributes": {
+                    "description": "Attributes of group",
+                    "type": "object"
+                }
+            }
+        },
+        "JoinGroup": {
+            "type": "object",
+            "properties": {
+                "users": {
+                    "description": "List of user IDs and a flag ingdicationg on whether admin priviledges should be granted.",
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                }
+            }
+        },
+        "RoleUpdate": {
+            "type": "object",
+            "properties": {
+                "attributes": {
+                    "description": "Object with keys the groups IDs and values arrays of user IDs",
+                    "type": "object"
+                }
+            }
+        },
+        "ErrorReport": {
+            "type": "object",
+            "properties": {
+                "internal_status": {
+                    "description": "Status of the error",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "Message of the error",
+                    "type": "string"
+                },
+                "reason": {
+                    "description": "Reason of the error",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Status of the error",
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}
