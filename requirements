@@ -1,6 +1,7 @@
 flask
 Flask-Pydantic
 Flask-OIDC
+werkzeug == 2.3.7
 flask-cors
 flask-restx
 flask-swagger-ui
