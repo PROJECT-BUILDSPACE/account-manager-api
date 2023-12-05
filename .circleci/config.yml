@@ -1,0 +1,35 @@
+version: '2.1'
+orbs:
+  docker: circleci/docker@2.4.0
+jobs:
+  build-push:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - setup_remote_docker
+
+      - docker/check:
+          docker-password: DOCKER_PASSWORD
+          docker-username: DOCKER_USERNAME
+
+      - docker/build:
+          image: buildspace/account-manager-api
+          
+      - docker/push:
+          image: buildspace/account-manager-api
+
+      - run:
+          name: Trigger deploy manifests pipeline
+          command: |
+            curl -X POST https://circleci.com/api/v2/project/github/PROJECT-BUILDSPACE/kubernetes-manifests/pipeline \
+              --header "Circle-Token: $CIRCLE_TOKEN" \
+              --header "content-type: application/json" \
+              --data '{"branch":"main"}'        
+workflows:
+  build-push-docker-image:
+    jobs:
+      - build-push:
+          context: 
+            - circleci-api
+            - docker-ctx
