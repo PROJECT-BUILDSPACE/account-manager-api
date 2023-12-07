@@ -15,9 +15,11 @@ jobs:
 
       - docker/build:
           image: buildspace/account-manager-api
-          
+          tag: latest
+
       - docker/push:
           image: buildspace/account-manager-api
+          tag: latest
 
       - run:
           name: Trigger deploy manifests pipeline
