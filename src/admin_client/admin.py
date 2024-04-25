@@ -2,7 +2,7 @@ import requests
 from src.utils import Globals
 from urllib.parse import urlencode
 from src.utils import RespondWithError
-from models import Group, Role, List, UserData
+from models import Group, Role, List, UserData, UserAttrs
 
 class AdminClient():
     def __init__(self):
@@ -118,6 +118,19 @@ class AdminClient():
                 }
             ]
         }
+        response = requests.put(self.base + f'/admin/realms/{self.realm}/users/{user_id}', json=payload, headers=headers)
+        if response.status_code >= 300:
+            raise ConnectionError('Could not update user password.', response.status_code)
+        return response
+
+    def update_attributes(self, user_id: str, attributes: dict):
+        headers = {'Authorization': self.__master_token__}
+        try:
+            _ = UserAttrs.parse_obj(attributes)
+        except:
+            raise ConnectionError('Not valid attributes', 400)
+
+        payload = {"attributes": attributes}
         response = requests.put(self.base + f'/admin/realms/{self.realm}/users/{user_id}', json=payload, headers=headers)
         if response.status_code >= 300:
             raise ConnectionError('Could not update user password.', response.status_code)

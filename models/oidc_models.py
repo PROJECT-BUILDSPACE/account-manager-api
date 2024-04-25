@@ -72,3 +72,22 @@ class UserData(BaseModel):
     requiredActions: List
     notBefore: int
     access: Access
+    attributes: Optional[Dict[str, str]]
+
+class LoginParams(BaseModel):
+    grant_type: Optional[str]
+    client_id: Optional[str]
+    client_secret: Optional[str]
+    username: str
+    password: str
+
+
+# class AccessGranted(BaseModel):
+#     access_token: str
+#     expires_in: int
+#     refresh_expires_in: int
+#     refresh_token: str
+#     token_type: str
+#     not_before_policy: int
+#     session_state: str
+#     scope: str

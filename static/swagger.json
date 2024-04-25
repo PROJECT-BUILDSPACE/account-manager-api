@@ -221,20 +221,12 @@
                 ]
             }
         },
-        "/user/{user_id}": {
-            "parameters": [
-                {
-                    "name": "user_id",
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                }
-            ],
+        "/user/": {
             "put": {
-                "description": "Change user's password",
+                "description": "Change user's attributes or password.",
                 "parameters": [
                     {
-                        "description": "Provide an object with key 'password' and value the actual password.",
+                        "description": "Provide an object with key 'password' and value the new password or object with key 'attributes' and a UserAttrs value to update the user's attributes.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -242,11 +234,35 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Success"
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
                     }
                 },
-                "operationId": "change_password",
+                "operationId": "update_user",
                 "security": [
                     {
                         "Bearer": []
@@ -259,8 +275,8 @@
             "get": {
                 "description": "Get user's data",
                 "responses": {
-                    "201": {
-                        "description": "Created"
+                    "200": {
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad request",
@@ -293,6 +309,53 @@
                         "Bearer": []
                     }
                 ],
+                "tags": [
+                    "user"
+                ]
+            },
+            "post": {
+                "description": "Request API Token",
+                "parameters": [
+                    {
+                        "description": "Provide a LoginParams object to request an API token.",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/LoginParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorReport"
+                        }
+                    }
+                },
+                "operationId": "request_api_key",
                 "tags": [
                     "user"
                 ]
@@ -381,6 +444,31 @@
                 }
             }
         },
+        "LoginParams": {
+            "type": "object",
+            "properties": {
+                 "grant_type": {
+                    "description": "OIDC grant type of request",
+                    "type": "string"
+                 },
+                "client_id": {
+                    "description": "OIDC Client's ID",
+                    "type": "string"
+                 },
+                "client_secret": {
+                    "description": "OIDC Client's secret key",
+                    "type": "string"
+                 },
+                "username": {
+                    "description": "User's Username",
+                    "type": "string"
+                 },
+                "password": {
+                    "description": "User's password",
+                    "type": "string"
+                 }
+            }
+        },
         "ErrorReport": {
             "type": "object",
             "properties": {
@@ -399,6 +487,31 @@
                 "status": {
                     "description": "Status of the error",
                     "type": "integer"
+                }
+            }
+        },
+        "UserAttrs": {
+            "type": "object",
+            "properties": {
+                "occupation": {
+                    "description": "Occupation of the User",
+                    "type": "string"
+                },
+                "affiliation": {
+                    "description": "Where is the user working",
+                    "type": "string"
+                },
+                "country": {
+                    "description": "Country of the user",
+                    "type": "string"
+                },
+                "city": {
+                    "description": "City of the user",
+                    "type": "string"
+                },
+                "photo": {
+                    "description": "Serialised profile picture.",
+                    "type": "string"
                 }
             }
         }

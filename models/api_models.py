@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 from pydantic import BaseModel
 
 class ErrorReport(BaseModel):
@@ -14,3 +14,10 @@ class Administrator(BaseModel):
     admin: bool
 class JoinGroupBody(BaseModel):
     users: List[Dict[str, Administrator]]
+
+class UserAttrs(BaseModel):
+    occupation: Optional[List[str]]
+    affiliation: Optional[List[str]]
+    country: Optional[List[str]]
+    city: Optional[List[str]]
+    photo: Optional[List[str]]
