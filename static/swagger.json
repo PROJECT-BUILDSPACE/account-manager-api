@@ -314,16 +314,22 @@
                 ]
             },
             "post": {
-                "description": "Request API Token",
+                "summary": "Request API Token",
+                "description": "This endpoint allows users to request an API token.",
                 "parameters": [
                     {
-                        "description": "Provide a LoginParams object to request an API token.",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/LoginParams"
-                        }
+                      "name": "username",
+                      "in": "formData",
+                      "description": "Username",
+                      "required": true,
+                      "type": "string"
+                    },
+                    {
+                      "name": "password",
+                      "in": "formData",
+                      "description": "Password",
+                      "required": true,
+                      "type": "string"
                     }
                 ],
                 "responses": {

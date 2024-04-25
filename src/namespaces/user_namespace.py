@@ -61,9 +61,11 @@ class MainClass(Resource):
 
     def post(self):
         try:
-            body = LoginParams.parse_obj(request.json)
+            username = request.form.get('username')
+            password = request.form.get('password')
+            body = LoginParams(username=username, password=password)
         except Exception as e:
-            return RespondWithError(400, "Could not resolve payload.", str(e), "USR0001")
+            return RespondWithError(400, "Could not resolve encoded params.", str(e), "USR0001")
 
         realm = Globals().get_env("REALM", "buildspace")
 
