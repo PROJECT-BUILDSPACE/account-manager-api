@@ -75,9 +75,9 @@ class UserData(BaseModel):
     attributes: Optional[Dict[str, list]]
 
 class LoginParams(BaseModel):
-    grant_type: Optional[str]
-    client_id: Optional[str]
-    client_secret: Optional[str]
+    grant_type: Optional[str] = ""
+    client_id: Optional[str] = ""
+    client_secret: Optional[str] = ""
     username: str
     password: str
 
