@@ -17,7 +17,7 @@ def authentication(f):
         if not token:
             return RespondWithError(401, "Unauthorized.", "No Bearer token.", "MID0002")
 
-        base = Globals().get_env("ISSUER", "http://localhost:30105/auth")
+        base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
         bs_certs = Globals().get_env("BS_CERTS", "/realms/buildspace/protocol/openid-connect/certs")
 
         # jwks_client = PyJWKClient(base + bs_certs)
@@ -57,3 +57,19 @@ def admin_authority(f):
             g.admin = admin
         return f(*args, **kwargs)
     return wrap
+
+def naive_admin_authority(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        try:
+            admin = AdminClient()
+        except Exception as e:
+            return RespondWithError(e.args[1], "Cannot get admin client.",
+                                    e.args[0], "MID0002")
+
+        else:
+            g.admin = admin
+        return f(*args, **kwargs)
+    return wrap
+
+

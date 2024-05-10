@@ -70,9 +70,9 @@ class MainClass(Resource):
         realm = Globals().get_env("REALM", "buildspace")
 
         client_id = Globals().get_env("CLIENT_ID", "minioapi")
-        client_secret = Globals().get_env("CLIENT_SECRET", "d4AvWhUKAZqdMnBVPR0dD5w5RrZfk9RC")
+        client_secret = Globals().get_env("CLIENT_SECRET", "xdoNxAmEDv0zZuoskyh87gEMPNARWkID")
 
-        issuer = Globals().get_env("ISSUER", "http://localhost:30105/auth")
+        issuer = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
         issuer = f'{issuer}/realms/{realm}/protocol/openid-connect/token'
 
         body.grant_type = 'password'

@@ -6,7 +6,7 @@ from models import Group, Role, List, UserData, UserAttrs
 
 class AdminClient():
     def __init__(self):
-        self.base = Globals().get_env("ISSUER", "http://localhost:30105/auth")
+        self.base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
         self.realm = Globals().get_env("REALM", "buildspace")
         self.token_path = '/realms/master/protocol/openid-connect/token'
         self.admin_client = Globals().get_env("ADMIN_CLIENT", "admin-cli")
@@ -45,6 +45,14 @@ class AdminClient():
         if response.status_code >= 300:
             raise ConnectionError(response.reason, response.status_code)
         return Group.parse_obj(response.json())
+
+
+    def get_members(self, group_id: str) -> List[UserData]:
+        headers = {'Authorization': self.__master_token__}
+        response = requests.get(self.base + f'/admin/realms/{self.realm}/groups/{group_id}/members', headers=headers)
+        if response.status_code >= 300:
+            raise ConnectionError(response.reason, response.status_code)
+        return [UserData.parse_obj(item) for item in response.json()]
 
     def search_group(self, group_name: str) -> Group:
         headers = {'Authorization': self.__master_token__}

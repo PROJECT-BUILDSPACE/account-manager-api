@@ -4,7 +4,7 @@ from flask import Response
 # from src.utils.utils import oidc, mongoClient
 from functools import wraps
 from datetime import datetime
-from src.decorators import authentication, admin_authority
+from src.decorators import authentication, admin_authority, naive_admin_authority
 from models import Group, Role, JoinGroupBody
 from src.utils import RespondWithError
 from src.admin_client import AdminClient
@@ -136,3 +136,48 @@ class MainClass(Resource):
                                             e.args[0], "GRP0001")
 
         return None, 204
+
+    @authentication
+    @admin_authority
+    def get(self, group_id):
+        group_id = request.view_args['group_id']
+
+        # admin search group
+        try:
+            group = g.admin.get_group(group_id)
+        except Exception as err:
+            print(err)
+            return RespondWithError(err.args[1], "Could not find group.",
+                                    err.args[0], "GRP0006")
+
+        return group.dict(), 200
+
+@groupNamespace.route('/<group_name>/members', methods=['GET'])
+class MainClass(Resource):
+
+    @groupNamespace.doc(responses={200: 'OK', 400: 'Bad request', 500: 'Server Error'}, security='Bearer')
+    # @taskNamespace.model(task_model)
+    # @taskNamespace.param('id', 'id')
+
+    @authentication
+    @naive_admin_authority
+    def get(self, group_name):
+        group_name = request.view_args['group_name']
+
+        # admin search group
+        try:
+            group = g.admin.search_group(group_name)
+        except Exception as err:
+            print(err)
+            return RespondWithError(err.args[1], "Could not find group.",
+                                    err.args[0], "GRP0006")
+
+        # Get list of members in group
+        try:
+            members = g.admin.get_members(group.id)
+        except Exception as err:
+            return RespondWithError(err.args[1], "Could not retrieve members.",
+                                    err.args[0], "GRP0001")
+
+        return [item.id for item in members], 200
+
