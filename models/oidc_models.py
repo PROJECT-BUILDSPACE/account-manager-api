@@ -51,11 +51,16 @@ class Role(BaseModel):
 
 
 class Access(BaseModel):
-    manageGroupMembership: Optional[bool]
-    view: Optional[bool]
-    mapRoles: Optional[bool]
-    impersonate: Optional[bool]
-    manage: Optional[bool]
+    # manageGroupMembership: Optional[bool]
+    # view: Optional[bool]
+    # mapRoles: Optional[bool]
+    # impersonate: Optional[bool]
+    # manage: Optional[bool]
+    manageGroupMembership: bool = False
+    view: bool = False
+    mapRoles: bool = False
+    impersonate: bool = False
+    manage: bool = False
 
 
 class UserData(BaseModel):
@@ -71,7 +76,8 @@ class UserData(BaseModel):
     disableableCredentialTypes: List
     requiredActions: List
     notBefore: int
-    access: Optional[Access]
+    # access: Optional[Access]
+    access: Access = Access()
     attributes: Optional[Dict[str, list]]
 
 class LoginParams(BaseModel):

@@ -4,7 +4,7 @@ from flask import Response
 # from src.utils.utils import oidc, mongoClient
 from functools import wraps
 from datetime import datetime
-from src.decorators import authentication, admin_authority, naive_admin_authority
+from src.decorators import authentication, admin_authority, naive_admin_authority, admin_authority_name
 from models import Group, Role, JoinGroupBody
 from src.utils import RespondWithError
 from src.admin_client import AdminClient
@@ -15,6 +15,29 @@ groupNamespace = Namespace('group')
 
 parser = reqparse.RequestParser()
 # parser.add_argument('skip', type=int, help='skip tasks')
+
+
+@groupNamespace.route('/<group_id>', methods=['GET'])
+class MainClass(Resource):
+
+    @groupNamespace.doc(responses={200: 'OK', 400: 'Bad request', 500: 'Server Error'}, security='Bearer')
+    # @taskNamespace.model(task_model)
+    # @taskNamespace.param('id', 'id')
+
+    @authentication
+    @admin_authority
+    def get(self, group_id):
+        groupId = request.view_args['group_id']
+        # admin search group
+        try:
+            group = g.admin.get_group(groupId)
+        except Exception as err:
+            print(err)
+            return RespondWithError(err.args[1], "Could not find group.",
+                                    err.args[0], "GRP0006")
+
+        return group.dict(), 200
+
 
 @groupNamespace.route('/', methods=['POST', 'GET'])
 class MainClass(Resource):
@@ -74,7 +97,7 @@ class MainClass(Resource):
         return groups, 200
 
 
-@groupNamespace.route('/<group_id>', methods=['POST', 'PUT', 'GET', 'DELETE'])
+@groupNamespace.route('/<group_name>', methods=['POST', 'PUT', 'GET', 'DELETE'])
 class MainClass(Resource):
 
     @groupNamespace.doc(responses={200: 'OK', 400: 'Bad request', 500: 'Server Error'}, security='Bearer')
@@ -82,13 +105,20 @@ class MainClass(Resource):
     # @taskNamespace.param('id', 'id')
 
     @authentication
-    @admin_authority
-    def delete(self, group_id):
-        groupId = request.view_args['group_id']
+    @admin_authority_name
+    def delete(self, group_name):
+        groupName = request.view_args['group_name']
+        # admin search group
+        try:
+            group = g.admin.search_group(group_name)
+        except Exception as err:
+            print(err)
+            return RespondWithError(err.args[1], "Could not find group.",
+                                    err.args[0], "GRP0006")
 
         # admin delete group
         try:
-            g.admin.delete_group(group_id)
+            g.admin.delete_group(group.id)
         except Exception as err:
             return RespondWithError(err.args[1], "Could not delete group.",
                                     err.args[0], "GRP0001")
@@ -96,7 +126,7 @@ class MainClass(Resource):
         # delete roles
         try:
             admin_role = g.admin.get_role('group-admin')
-            _ = admin_role.attributes.pop(groupId)
+            _ = admin_role.attributes.pop(group.id)
             g.admin.update_role(admin_role)
         except Exception as e:
             return RespondWithError(e.args[1], "Could not update roles.",
@@ -105,9 +135,16 @@ class MainClass(Resource):
 
 
     @authentication
-    @admin_authority
-    def post(self, group_id):
-        groupId = request.view_args['group_id']
+    @admin_authority_name
+    def post(self, group_name):
+        groupName = request.view_args['group_name']
+        # admin search group
+        try:
+            group = g.admin.search_group(group_name)
+        except Exception as err:
+            print(err)
+            return RespondWithError(err.args[1], "Could not find group.",
+                                    err.args[0], "GRP0006")
 
         #resolve body
         try:
@@ -120,7 +157,7 @@ class MainClass(Resource):
             uid = list(item.keys())[0]
             adm = list(item.values())[0].admin
             try:
-                g.admin.join_group(group_id, uid)
+                g.admin.join_group(group.id, uid)
             except Exception as err:
                 return RespondWithError(err.args[1], f"Could not join user {uid}.",
                                         err.args[0], "GRP0001")
@@ -129,7 +166,7 @@ class MainClass(Resource):
                 # Add admin priviledges
                 try:
                     admin_role = g.admin.get_role('group-admin')
-                    admin_role.attributes[group_id][0] += f',{uid}'
+                    admin_role.attributes[group.id][0] += f',{uid}'
                     g.admin.update_role(admin_role)
                 except Exception as e:
                     return RespondWithError(e.args[1], f"Could not make user {uid} admin.",
@@ -138,13 +175,12 @@ class MainClass(Resource):
         return None, 204
 
     @authentication
-    @admin_authority
-    def get(self, group_id):
-        group_id = request.view_args['group_id']
-
+    @admin_authority_name
+    def get(self, group_name):
+        groupName = request.view_args['group_name']
         # admin search group
         try:
-            group = g.admin.get_group(group_id)
+            group = g.admin.search_group(group_name)
         except Exception as err:
             print(err)
             return RespondWithError(err.args[1], "Could not find group.",
@@ -180,4 +216,3 @@ class MainClass(Resource):
                                     err.args[0], "GRP0001")
 
         return [item.id for item in members], 200
-

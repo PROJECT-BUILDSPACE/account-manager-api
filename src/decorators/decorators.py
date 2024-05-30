@@ -17,7 +17,8 @@ def authentication(f):
         if not token:
             return RespondWithError(401, "Unauthorized.", "No Bearer token.", "MID0002")
 
-        base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
+        # base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
+        base = Globals().get_env("ISSUER", "http://localhost:30105/auth")
         bs_certs = Globals().get_env("BS_CERTS", "/realms/buildspace/protocol/openid-connect/certs")
 
         # jwks_client = PyJWKClient(base + bs_certs)
@@ -47,6 +48,38 @@ def admin_authority(f):
         try:
             admin_role: Role = admin.get_role('group-admin')
             admins = [item.strip() for item in admin_role.attributes[groupId][0].split(',')]
+        except:
+            return RespondWithError(403, "User is not allowed to perform this action",
+                                    "User requires admin priviledges.", "MID0002")
+        else:
+            if g.user.sub not in admins:
+                return RespondWithError(403, "User is not allowed to perform this action",
+                                        "User requires admin priviledges.", "MID0002")
+            g.admin = admin
+        return f(*args, **kwargs)
+    return wrap
+
+def admin_authority_name(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        try:
+            admin = AdminClient()
+        except Exception as e:
+            return RespondWithError(e.args[1], "Cannot get admin client.",
+                                    e.args[0], "MID0002")
+
+        groupName = request.view_args['group_name']
+
+        try:
+            group = admin.search_group(groupName)
+        except Exception as e:
+            print(e)
+            return RespondWithError(e.args[1], "Could not get group.",
+                                    e.args[0], "MID0002")
+
+        try:
+            admin_role: Role = admin.get_role('group-admin')
+            admins = [item.strip() for item in admin_role.attributes[group.id][0].split(',')]
         except:
             return RespondWithError(403, "User is not allowed to perform this action",
                                     "User requires admin priviledges.", "MID0002")

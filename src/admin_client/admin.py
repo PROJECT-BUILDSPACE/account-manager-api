@@ -6,7 +6,8 @@ from models import Group, Role, List, UserData, UserAttrs
 
 class AdminClient():
     def __init__(self):
-        self.base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
+        # self.base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
+        self.base = Globals().get_env("ISSUER", "http://localhost:30105/auth")
         self.realm = Globals().get_env("REALM", "buildspace")
         self.token_path = '/realms/master/protocol/openid-connect/token'
         self.admin_client = Globals().get_env("ADMIN_CLIENT", "admin-cli")
@@ -57,8 +58,10 @@ class AdminClient():
     def search_group(self, group_name: str) -> Group:
         headers = {'Authorization': self.__master_token__}
         response = requests.get(self.base + f'/admin/realms/{self.realm}/groups/?search={group_name}', headers=headers)
+        print("group_name:", group_name)
         if response.status_code >= 300:
             raise ConnectionError(response.reason, response.status_code)
+
         return Group.parse_obj(response.json()[0])
 
     def delete_group(self, group_id: str):
@@ -134,6 +137,7 @@ class AdminClient():
     def update_attributes(self, user_id: str, attributes: dict):
         headers = {'Authorization': self.__master_token__}
         try:
+            print("attributes: ", attributes)
             _ = UserAttrs.parse_obj(attributes)
         except:
             raise ConnectionError('Not valid attributes', 400)

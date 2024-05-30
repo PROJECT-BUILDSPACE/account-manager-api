@@ -42,7 +42,8 @@ class MainClass(Resource):
         if len(body.keys()) > 1:
             return RespondWithError(e.args[1], "Mixed content on update. Update either the password or the attributes.",
                                     e.args[0], "USR0002")
-        elif list(body.keys())[0] == 'attributes':
+        # elif list(body.keys())[0] == 'attributes':
+        elif 'attributes' in body:
             try:
                 admin = AdminClient()
                 admin.update_attributes(g.user.sub, body['attributes'])
@@ -70,9 +71,10 @@ class MainClass(Resource):
         realm = Globals().get_env("REALM", "buildspace")
 
         client_id = Globals().get_env("CLIENT_ID", "minioapi")
-        client_secret = Globals().get_env("CLIENT_SECRET", "xdoNxAmEDv0zZuoskyh87gEMPNARWkID")
+        client_secret = Globals().get_env("CLIENT_SECRET", "JSbJwHs0HPCDbvr1gcID76AV0RxZfsuw")
 
-        issuer = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
+        # issuer = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
+        issuer = Globals().get_env("ISSUER", "http://localhost:30105/auth")
         issuer = f'{issuer}/realms/{realm}/protocol/openid-connect/token'
 
         body.grant_type = 'password'
