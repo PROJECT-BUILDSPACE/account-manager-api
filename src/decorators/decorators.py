@@ -48,11 +48,13 @@ def admin_authority(f):
         try:
             admin_role: Role = admin.get_role('group-admin')
             admins = [item.strip() for item in admin_role.attributes[groupId][0].split(',')]
-        except:
+        except Exception as e:
+            # print(f"Admin Authority Role Retrieval Error: {e}")
             return RespondWithError(403, "User is not allowed to perform this action",
                                     "User requires admin priviledges.", "MID0002")
         else:
             if g.user.sub not in admins:
+                # print(f"Admin Authority User {g.user.sub} is not an admin for group_name {groupName}. Admins: {admins}")
                 return RespondWithError(403, "User is not allowed to perform this action",
                                         "User requires admin priviledges.", "MID0002")
             g.admin = admin
@@ -65,26 +67,35 @@ def admin_authority_name(f):
         try:
             admin = AdminClient()
         except Exception as e:
+            # print(f"AdminClient Initialization Error: {e}")
             return RespondWithError(e.args[1], "Cannot get admin client.",
                                     e.args[0], "MID0002")
 
         groupName = request.view_args['group_name']
+        if not groupName:
+            # print("Missing group_name in request")
+            return RespondWithError(400, "Bad Request", "Missing group_name in request.", "MID0002")
 
         try:
             group = admin.search_group(groupName)
+            print(f"Group Retrieved: {group}")
         except Exception as e:
-            print(e)
+            # print(f"Group Search Error: {e}")
             return RespondWithError(e.args[1], "Could not get group.",
                                     e.args[0], "MID0002")
 
         try:
             admin_role: Role = admin.get_role('group-admin')
             admins = [item.strip() for item in admin_role.attributes[group.id][0].split(',')]
-        except:
+            # print(f"Admin Role Retrieved: {admin_role}")
+            # print(f"Admins List for group_name {groupName} (group_id {group.id}): {admins}")
+        except Exception as e:
+            # print(f"Role Retrieval Error: {e}")
             return RespondWithError(403, "User is not allowed to perform this action",
                                     "User requires admin priviledges.", "MID0002")
         else:
             if g.user.sub not in admins:
+                # print(f"User {g.user.sub} is not an admin for group_name {groupName}. Admins: {admins}")
                 return RespondWithError(403, "User is not allowed to perform this action",
                                         "User requires admin priviledges.", "MID0002")
             g.admin = admin

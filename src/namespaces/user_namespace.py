@@ -43,7 +43,7 @@ class MainClass(Resource):
             return RespondWithError(e.args[1], "Mixed content on update. Update either the password or the attributes.",
                                     e.args[0], "USR0002")
         # elif list(body.keys())[0] == 'attributes':
-        elif 'attributes' in body:
+        elif 'attributes' in list(body.keys()):
             try:
                 admin = AdminClient()
                 admin.update_attributes(g.user.sub, body['attributes'])

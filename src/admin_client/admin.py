@@ -119,6 +119,13 @@ class AdminClient():
             raise ConnectionError('Could not get user data.', response.status_code)
         return response.json()
 
+    def get_userdata_by_email(self, user_email: str) -> UserData:
+        headers = {'Authorization': self.__master_token__}
+        response = requests.get(self.base + f'/admin/realms/{self.realm}/users/?search={user_email}',headers=headers)
+        if response.status_code >= 300:
+            raise ConnectionError('Could not get user data.', response.status_code)
+        return UserData.model_validate(response.json()[0])
+
     def update_password(self, user_id: str, new_pwd: str):
         headers = {'Authorization': self.__master_token__}
         payload = {
@@ -145,5 +152,5 @@ class AdminClient():
         payload = {"attributes": attributes}
         response = requests.put(self.base + f'/admin/realms/{self.realm}/users/{user_id}', json=payload, headers=headers)
         if response.status_code >= 300:
-            raise ConnectionError('Could not update user password.', response.status_code)
+            raise ConnectionError('Could not update user attributes.', response.status_code)
         return response

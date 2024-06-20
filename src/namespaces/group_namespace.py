@@ -17,7 +17,7 @@ parser = reqparse.RequestParser()
 # parser.add_argument('skip', type=int, help='skip tasks')
 
 
-@groupNamespace.route('/<group_id>', methods=['GET'])
+@groupNamespace.route('/id/<group_id>', methods=['GET'])
 class MainClass(Resource):
 
     @groupNamespace.doc(responses={200: 'OK', 400: 'Bad request', 500: 'Server Error'}, security='Bearer')
@@ -154,8 +154,10 @@ class MainClass(Resource):
                                     err.args[0], "GRP0001")
         # admin delete group
         for item in body.users:
-            uid = list(item.keys())[0]
+            user_email = list(item.keys())[0]
             adm = list(item.values())[0].admin
+            user = g.admin.get_userdata_by_email(user_email)
+            uid = user.id
             try:
                 g.admin.join_group(group.id, uid)
             except Exception as err:
