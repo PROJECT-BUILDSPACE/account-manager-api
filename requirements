@@ -10,3 +10,4 @@ pydantic
 PyJWT
 cryptography
 httplib2
+minio

@@ -15,6 +15,7 @@ def RespondWithError(code: int, message: str, reason: str, internal_code: str):
 
 def decode_n_verify(token, jwks_uri):
     jwks = requests.get(jwks_uri)
+    jwks = requests.get(jwks_uri)
     jwks = jwks.json()
 
     public_keys = {jwk['kid']: jwt.algorithms.RSAAlgorithm.from_jwk(json.dumps(jwk)) for jwk in jwks['keys']}

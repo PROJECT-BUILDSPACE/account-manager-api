@@ -17,7 +17,7 @@ parser = reqparse.RequestParser()
 # parser.add_argument('skip', type=int, help='skip tasks')
 
 
-@groupNamespace.route('/id/<group_id>', methods=['GET'])
+@groupNamespace.route('/id/<group_id>', methods=['GET', 'DELETE'])
 class MainClass(Resource):
 
     @groupNamespace.doc(responses={200: 'OK', 400: 'Bad request', 500: 'Server Error'}, security='Bearer')
@@ -32,11 +32,31 @@ class MainClass(Resource):
         try:
             group = g.admin.get_group(groupId)
         except Exception as err:
-            print(err)
             return RespondWithError(err.args[1], "Could not find group.",
                                     err.args[0], "GRP0006")
 
         return group.dict(), 200
+
+    @authentication
+    @admin_authority
+    def delete(self, group_id):
+        group_id = request.view_args['group_id']
+        # admin delete group
+        try:
+            g.admin.delete_group(group_id)
+        except Exception as err:
+            return RespondWithError(err.args[1], "Could not delete group.",
+                                    err.args[0], "GRP0001")
+
+        # delete roles
+        try:
+            admin_role = g.admin.get_role('group-admin')
+            _ = admin_role.attributes.pop(group_id)
+            g.admin.update_role(admin_role)
+        except Exception as e:
+            return RespondWithError(e.args[1], "Could not update roles.",
+                                    e.args[0], "GRP0001")
+        return None, 204
 
 
 @groupNamespace.route('/', methods=['POST', 'GET'])
@@ -54,6 +74,7 @@ class MainClass(Resource):
 
         # Create current timestamp
         body.attributes['created'] = [str(datetime.now())]
+        body.attributes['picture'] = ["http://minio-service-TBChanded:9000/profile-pictures/group1.jpg"]
 
         # Create group
         try:
@@ -104,35 +125,6 @@ class MainClass(Resource):
     # @taskNamespace.model(task_model)
     # @taskNamespace.param('id', 'id')
 
-    @authentication
-    @admin_authority_name
-    def delete(self, group_name):
-        groupName = request.view_args['group_name']
-        # admin search group
-        try:
-            group = g.admin.search_group(group_name)
-        except Exception as err:
-            print(err)
-            return RespondWithError(err.args[1], "Could not find group.",
-                                    err.args[0], "GRP0006")
-
-        # admin delete group
-        try:
-            g.admin.delete_group(group.id)
-        except Exception as err:
-            return RespondWithError(err.args[1], "Could not delete group.",
-                                    err.args[0], "GRP0001")
-
-        # delete roles
-        try:
-            admin_role = g.admin.get_role('group-admin')
-            _ = admin_role.attributes.pop(group.id)
-            g.admin.update_role(admin_role)
-        except Exception as e:
-            return RespondWithError(e.args[1], "Could not update roles.",
-                                    e.args[0], "GRP0001")
-        return None, 204
-
 
     @authentication
     @admin_authority_name
@@ -142,7 +134,6 @@ class MainClass(Resource):
         try:
             group = g.admin.search_group(group_name)
         except Exception as err:
-            print(err)
             return RespondWithError(err.args[1], "Could not find group.",
                                     err.args[0], "GRP0006")
 
@@ -184,7 +175,6 @@ class MainClass(Resource):
         try:
             group = g.admin.search_group(group_name)
         except Exception as err:
-            print(err)
             return RespondWithError(err.args[1], "Could not find group.",
                                     err.args[0], "GRP0006")
 
@@ -206,7 +196,6 @@ class MainClass(Resource):
         try:
             group = g.admin.search_group(group_name)
         except Exception as err:
-            print(err)
             return RespondWithError(err.args[1], "Could not find group.",
                                     err.args[0], "GRP0006")
 
@@ -217,4 +206,4 @@ class MainClass(Resource):
             return RespondWithError(err.args[1], "Could not retrieve members.",
                                     err.args[0], "GRP0001")
 
-        return [item.id for item in members], 200
+        return [item.email for item in members], 200

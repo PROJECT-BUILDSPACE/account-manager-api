@@ -20,4 +20,3 @@ class UserAttrs(BaseModel):
     affiliation: Optional[List[str]]
     country: Optional[List[str]]
     city: Optional[List[str]]
-    photo: Optional[List[str]]

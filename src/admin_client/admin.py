@@ -2,12 +2,12 @@ import requests
 from src.utils import Globals
 from urllib.parse import urlencode
 from src.utils import RespondWithError
-from models import Group, Role, List, UserData, UserAttrs
+from models import Group, Role, List, UserData, UserAttrs, UserRegistration
 
 class AdminClient():
     def __init__(self):
-        # self.base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
-        self.base = Globals().get_env("ISSUER", "http://localhost:30105/auth")
+        self.base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
+        # self.base = Globals().get_env("ISSUER", "http://localhost:30105/auth")
         self.realm = Globals().get_env("REALM", "buildspace")
         self.token_path = '/realms/master/protocol/openid-connect/token'
         self.admin_client = Globals().get_env("ADMIN_CLIENT", "admin-cli")
@@ -55,14 +55,28 @@ class AdminClient():
             raise ConnectionError(response.reason, response.status_code)
         return [UserData.parse_obj(item) for item in response.json()]
 
+    def register_user(self, user: UserRegistration):
+        headers = {'Authorization': self.__master_token__}
+        payload = user.dict()
+        response = requests.post(self.base + f'/admin/realms/{self.realm}/users', json=payload, headers=headers)
+        if response.status_code >= 300:
+            raise ConnectionError(response.reason, response.status_code)
+        return payload
+
     def search_group(self, group_name: str) -> Group:
         headers = {'Authorization': self.__master_token__}
         response = requests.get(self.base + f'/admin/realms/{self.realm}/groups/?search={group_name}', headers=headers)
-        print("group_name:", group_name)
         if response.status_code >= 300:
             raise ConnectionError(response.reason, response.status_code)
 
         return Group.parse_obj(response.json()[0])
+
+    def search_user(self, email: str) -> UserData:
+        headers = {'Authorization': self.__master_token__}
+        response = requests.get(self.base + f'/admin/realms/{self.realm}/users/?search={email}', headers=headers)
+        if response.status_code >= 300:
+            raise ConnectionError(response.reason, response.status_code)
+        return UserData.parse_obj(response.json()[0])
 
     def delete_group(self, group_id: str):
         headers = {'Authorization': self.__master_token__}
@@ -124,7 +138,7 @@ class AdminClient():
         response = requests.get(self.base + f'/admin/realms/{self.realm}/users/?search={user_email}',headers=headers)
         if response.status_code >= 300:
             raise ConnectionError('Could not get user data.', response.status_code)
-        return UserData.model_validate(response.json()[0])
+        return UserData.parse_obj(response.json()[0])
 
     def update_password(self, user_id: str, new_pwd: str):
         headers = {'Authorization': self.__master_token__}
@@ -144,7 +158,6 @@ class AdminClient():
     def update_attributes(self, user_id: str, attributes: dict):
         headers = {'Authorization': self.__master_token__}
         try:
-            print("attributes: ", attributes)
             _ = UserAttrs.parse_obj(attributes)
         except:
             raise ConnectionError('Not valid attributes', 400)

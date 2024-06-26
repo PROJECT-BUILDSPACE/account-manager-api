@@ -17,14 +17,16 @@ def authentication(f):
         if not token:
             return RespondWithError(401, "Unauthorized.", "No Bearer token.", "MID0002")
 
-        # base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
-        base = Globals().get_env("ISSUER", "http://localhost:30105/auth")
+        base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
+        # base = Globals().get_env("ISSUER", "http://localhost:30105/auth")
         bs_certs = Globals().get_env("BS_CERTS", "/realms/buildspace/protocol/openid-connect/certs")
 
         # jwks_client = PyJWKClient(base + bs_certs)
 
         try:
             # signing_key = jwks_client.get_signing_key_from_jwt(token)
+            # import time
+            # time.sleep(0.8)
             data = decode_n_verify(token, base + bs_certs)
         except Exception as e:
             g.user = None
@@ -80,7 +82,6 @@ def admin_authority_name(f):
             group = admin.search_group(groupName)
             print(f"Group Retrieved: {group}")
         except Exception as e:
-            # print(f"Group Search Error: {e}")
             return RespondWithError(e.args[1], "Could not get group.",
                                     e.args[0], "MID0002")
 
