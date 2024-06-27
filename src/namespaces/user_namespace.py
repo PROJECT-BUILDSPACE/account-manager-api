@@ -163,7 +163,7 @@ class MainClass(Resource):
             storage,
             access_key=access_key,
             secret_key=secret_key,
-            secure=False  # Set to True if using HTTPS
+            secure=True  # Set to True if using HTTPS
         )
 
         try:
@@ -185,3 +185,28 @@ class MainClass(Resource):
                                         err.args[0], "USR0010")
         return None, 201
 
+
+@userNamespace.route('/refresh', methods=['POST'])
+class MainClass(Resource):
+
+    @userNamespace.doc(responses={200: 'OK', 500: 'Server Error'})
+    def post(self):
+        refresh_token = request.form.get('refresh_token')
+
+        realm = Globals().get_env("REALM", "buildspace")
+        client_id = Globals().get_env("CLIENT_ID", "minioapi")
+        client_secret = Globals().get_env("CLIENT_SECRET", "cD9VJiGEttbogB8UBcRSi0ZrJobaWCcN")
+
+        issuer = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
+        issuer = f'{issuer}/realms/{realm}/protocol/openid-connect/token'
+
+        payload = {
+            'grant_type': 'refresh_token',
+            'refresh_token': refresh_token,
+            'client_id': client_id,
+            'client_secret': client_secret
+        }
+
+        response = requests.post(issuer, data=payload)
+
+        return response.json(), response.status_code
