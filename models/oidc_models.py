@@ -27,7 +27,7 @@ class BearerToken(BaseModel):
     scope: str
     sid: str
     email_verified: bool
-    groupIDs: List[str]
+    group_names: List[str]
     name: str
     preferred_username: str
     given_name: str

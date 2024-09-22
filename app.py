@@ -47,8 +47,8 @@ if os.environ.get('HTTPS'):
 
 
 manager_api = Api(app=app, version='1.0'
-            , title="BUILDSPACE Accounts"
-            , description='BUILDSPACE Account Manager API', authorizations=authorizations, doc=False, default_swagger_filename='llll')
+            , title="Account Manager"
+            , description='Account Manager API', authorizations=authorizations, doc=False, default_swagger_filename='llll')
 
 
 manager_api.add_namespace(groupNamespace)

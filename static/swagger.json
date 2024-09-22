@@ -1,11 +1,11 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a swagger for the API that was developed as an account manager in the context of the BUILDSPACE project.",
-        "title": "BUILSPACE Account Manger Swagger API",
+        "description": "This is a swagger for the API that was developed by SingularLogic as an account manager in the context of the Core Platform",
+        "title": "Account Manger Swagger API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "BUILDSPACE Core Platform Support",
+            "name": "Core Platform Support",
             "url": "http://www.swagger.io/support",
             "email": "isotiropoulos@singularlogic.eu"
         },

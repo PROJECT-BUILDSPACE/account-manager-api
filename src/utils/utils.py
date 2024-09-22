@@ -5,7 +5,7 @@ import json
 
 def RespondWithError(code: int, message: str, reason: str, internal_code: str):
 	error = {
-        "message": message + " Please contact the BUILDSPACE Support Team.",
+        "message": message + " Please contact the Account Manager's  Support Team.",
         "reason": reason,
         "status": code,
         "internal_status": internal_code

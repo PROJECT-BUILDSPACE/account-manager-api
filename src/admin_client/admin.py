@@ -6,12 +6,12 @@ from models import Group, Role, List, UserData, UserAttrs, UserRegistration
 
 class AdminClient():
     def __init__(self):
-        self.base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
-        # self.base = Globals().get_env("ISSUER", "http://localhost:30105/auth")
-        self.realm = Globals().get_env("REALM", "buildspace")
+        # self.base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
+        self.base = Globals().get_env("ISSUER", "https://keycloak-inherit.euinno.eu")
+        self.realm = Globals().get_env("REALM", "inherit")
         self.token_path = '/realms/master/protocol/openid-connect/token'
         self.admin_client = Globals().get_env("ADMIN_CLIENT", "admin-cli")
-        self.admin_uname = Globals().get_env("ADMIN_UNAME", "buildspace")
+        self.admin_uname = Globals().get_env("ADMIN_UNAME", "inherit")
         self.admin_pwd = Globals().get_env("ADMIN_PWD", "4@8<lk4<iAhp&of")
         self.__master_token__ = 'Bearer ' + self.__get_master_token__()
 

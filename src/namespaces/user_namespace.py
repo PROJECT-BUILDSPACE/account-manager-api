@@ -30,7 +30,6 @@ class MainClass(Resource):
             return RespondWithError(e.args[1], "Could not fetch user data.",
                                     e.args[0], "USR0001")
 
-        # get group names from IDs
         return user_data, 200
 
     @authentication
@@ -69,14 +68,14 @@ class MainClass(Resource):
         except Exception as e:
             return RespondWithError(400, "Could not resolve encoded params.", str(e), "USR0001")
 
-        realm = Globals().get_env("REALM", "buildspace")
+        realm = Globals().get_env("REALM", "inherit")
 
         client_id = Globals().get_env("CLIENT_ID", "minioapi")
         # client_secret = Globals().get_env("CLIENT_SECRET", "JSbJwHs0HPCDbvr1gcID76AV0RxZfsuw")
 
-        client_secret = Globals().get_env("CLIENT_SECRET", "cD9VJiGEttbogB8UBcRSi0ZrJobaWCcN")
+        client_secret = Globals().get_env("CLIENT_SECRET", "mIWTXyouXXnIuDOUrVs57AsP7uYrOOEL")
 
-        issuer = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
+        issuer = Globals().get_env("ISSUER", "https://keycloak-inherit.euinno.eu")
         # issuer = Globals().get_env("ISSUER", "http://localhost:30105/auth")
         issuer = f'{issuer}/realms/{realm}/protocol/openid-connect/token'
 
@@ -131,14 +130,7 @@ class MainClass(Resource):
             else:
                 user = admin.search_user(email)
 
-                try:
-                    copernicus_id = Globals().get_env("COPERNICUS_BUCKET_ID", "1ae79ed4-b1c0-49fb-a762-ed289663fa2c")
-                    admin.join_group(copernicus_id, user.id)
-                except Exception as err:
-                    return RespondWithError(err.args[1], f"Could not join user {user.id} to Copernicus public organization.",
-                                            err.args[0], "USR0008")
-
-        return user.dict(), 201
+                return user.dict(), 201
 
 
 @userNamespace.route('/picture/<id>', methods=['POST'])
@@ -148,7 +140,7 @@ class MainClass(Resource):
     @authentication
     def post(self, id):
         id = request.view_args['id']
-        storage = Globals().get_env('STORAGE', 'minikube.local:30900')
+        storage = Globals().get_env('STORAGE', 'minioapi-inherit.euinno.eu')
         pictures_bucket = Globals().get_env('PICTURES_BUCKET_ENDPOINT', 'pictures')
         access_key = Globals().get_env('ACCESS_KEY', 'NhBMrNSmM5nErUpB64zZ') #jQ9Ec11FhlQxxZyLPGXY
         secret_key = Globals().get_env('SECRET_ACCESS_KEY', 'Lbkgsp5LQ3yfjC2CZARMMi9urKHkFdmZgP5Xr1Nx') #DKDsTKhUiPuZdCytM4mTAFsPanbPfkHrJ9yUZPXK
@@ -193,11 +185,11 @@ class MainClass(Resource):
     def post(self):
         refresh_token = request.form.get('refresh_token')
 
-        realm = Globals().get_env("REALM", "buildspace")
+        realm = Globals().get_env("REALM", "inherit")
         client_id = Globals().get_env("CLIENT_ID", "minioapi")
-        client_secret = Globals().get_env("CLIENT_SECRET", "cD9VJiGEttbogB8UBcRSi0ZrJobaWCcN")
+        client_secret = Globals().get_env("CLIENT_SECRET", "mIWTXyouXXnIuDOUrVs57AsP7uYrOOEL")
 
-        issuer = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
+        issuer = Globals().get_env("ISSUER", "https://keycloak-inherit.euinno.eu")
         issuer = f'{issuer}/realms/{realm}/protocol/openid-connect/token'
 
         payload = {

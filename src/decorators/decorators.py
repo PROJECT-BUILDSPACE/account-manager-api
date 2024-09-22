@@ -17,12 +17,11 @@ def authentication(f):
         if not token:
             return RespondWithError(401, "Unauthorized.", "No Bearer token.", "MID0002")
 
-        base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
+        base = Globals().get_env("ISSUER", "https://keycloak-inherit.euinno.eu")
         # base = Globals().get_env("ISSUER", "http://localhost:30105/auth")
-        bs_certs = Globals().get_env("BS_CERTS", "/realms/buildspace/protocol/openid-connect/certs")
+        bs_certs = Globals().get_env("BS_CERTS", "/realms/inherit/protocol/openid-connect/certs")
 
         # jwks_client = PyJWKClient(base + bs_certs)
-
         try:
             # signing_key = jwks_client.get_signing_key_from_jwt(token)
             # import time
