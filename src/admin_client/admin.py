@@ -47,6 +47,13 @@ class AdminClient():
             raise ConnectionError(response.reason, response.status_code)
         return Group.parse_obj(response.json())
 
+    def get_all_groups(self) -> List[Group]:
+        headers = {'Authorization': self.__master_token__}
+        response = requests.get(self.base + f'/admin/realms/{self.realm}/groups', headers=headers)
+        if response.status_code >= 300:
+            raise ConnectionError(response.reason, response.status_code)
+        # return [Group.parse_obj(item) for item in response.json()]
+        return response.json()
 
     def get_members(self, group_id: str) -> List[UserData]:
         headers = {'Authorization': self.__master_token__}

@@ -17,6 +17,22 @@ parser = reqparse.RequestParser()
 # parser.add_argument('skip', type=int, help='skip tasks')
 
 
+@groupNamespace.route('/all', methods=['GET'])
+class MainClass(Resource):
+
+    @groupNamespace.doc(responses={200: 'OK', 400: 'Bad request', 500: 'Server Error'}, security='Bearer')
+
+    @authentication
+    @naive_admin_authority
+    def get(self):
+
+        try:
+            groups = g.admin.get_all_groups()
+        except Exception as err:
+            return RespondWithError(err.args[1], "Could not fetch groups.",
+                                    err.args[0], "GRP0016")
+        return groups, 200
+
 @groupNamespace.route('/id/<group_id>', methods=['GET', 'DELETE'])
 class MainClass(Resource):
 
@@ -118,7 +134,7 @@ class MainClass(Resource):
         return groups, 200
 
 
-@groupNamespace.route('/<group_name>', methods=['POST', 'PUT', 'GET', 'DELETE'])
+@groupNamespace.route('/name/<group_name>', methods=['POST', 'PUT', 'GET', 'DELETE'])
 class MainClass(Resource):
 
     @groupNamespace.doc(responses={200: 'OK', 400: 'Bad request', 500: 'Server Error'}, security='Bearer')

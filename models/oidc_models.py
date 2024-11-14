@@ -27,7 +27,7 @@ class BearerToken(BaseModel):
     scope: str
     sid: str
     email_verified: bool
-    group_names: List[str]
+    group_names: List[str] = []
     name: str
     preferred_username: str
     given_name: str
@@ -78,7 +78,7 @@ class UserData(BaseModel):
     notBefore: int
     # access: Optional[Access]
     access: Access = Access()
-    attributes: Optional[Dict[str, list]]
+    attributes: Optional[Dict[str, list]] = None
 
 
 class Credentials(BaseModel):
