@@ -11,3 +11,4 @@ PyJWT
 cryptography
 httplib2
 minio
+python-dotenv

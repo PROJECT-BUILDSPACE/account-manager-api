@@ -57,7 +57,7 @@ manager_api.add_namespace(userNamespace)
 
 # manager_api.init_app(app=app, add_specs=False)
 if __name__ == "__main__":
-    debug = Globals().get_env("DEBUG", "true")
+    debug = Globals().get_env("DEBUG")
 
     if debug == "true":
         app.run(host='0.0.0.0', port=5001, debug=True)

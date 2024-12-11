@@ -68,14 +68,14 @@ class MainClass(Resource):
         except Exception as e:
             return RespondWithError(400, "Could not resolve encoded params.", str(e), "USR0001")
 
-        realm = Globals().get_env("REALM", "inherit")
+        realm = Globals().get_env("REALM")
 
-        client_id = Globals().get_env("CLIENT_ID", "minioapi")
+        client_id = Globals().get_env("CLIENT_ID")
         # client_secret = Globals().get_env("CLIENT_SECRET", "JSbJwHs0HPCDbvr1gcID76AV0RxZfsuw")
 
-        client_secret = Globals().get_env("CLIENT_SECRET", "mIWTXyouXXnIuDOUrVs57AsP7uYrOOEL")
+        client_secret = Globals().get_env("CLIENT_SECRET")
 
-        issuer = Globals().get_env("ISSUER", "https://keycloak-inherit.euinno.eu")
+        issuer = Globals().get_env("ISSUER")
         # issuer = Globals().get_env("ISSUER", "http://localhost:30105/auth")
         issuer = f'{issuer}/realms/{realm}/protocol/openid-connect/token'
 
@@ -116,7 +116,7 @@ class MainClass(Resource):
             if picture:
                body.attributes = {"picture": picture}
             else:
-                picture = Globals().get_env("USER_DEFAULT_PICTURE", "default_user_icon.png")
+                picture = Globals().get_env("USER_DEFAULT_PICTURE")
                 body.attributes = {"picture": picture}
         except Exception as e:
             return RespondWithError(400, "Could not resolve encoded params.", str(e), "USR0001")
@@ -140,10 +140,10 @@ class MainClass(Resource):
     @authentication
     def post(self, id):
         id = request.view_args['id']
-        storage = Globals().get_env('STORAGE', 'minioapi-inherit.euinno.eu')
-        pictures_bucket = Globals().get_env('PICTURES_BUCKET_ENDPOINT', 'pictures')
-        access_key = Globals().get_env('ACCESS_KEY', 'NhBMrNSmM5nErUpB64zZ') #jQ9Ec11FhlQxxZyLPGXY
-        secret_key = Globals().get_env('SECRET_ACCESS_KEY', 'Lbkgsp5LQ3yfjC2CZARMMi9urKHkFdmZgP5Xr1Nx') #DKDsTKhUiPuZdCytM4mTAFsPanbPfkHrJ9yUZPXK
+        storage = Globals().get_env('STORAGE')
+        pictures_bucket = Globals().get_env('PICTURES_BUCKET_ENDPOINT')
+        access_key = Globals().get_env('ACCESS_KEY') #jQ9Ec11FhlQxxZyLPGXY
+        secret_key = Globals().get_env('SECRET_ACCESS_KEY') #DKDsTKhUiPuZdCytM4mTAFsPanbPfkHrJ9yUZPXK
 
         picture = io.BytesIO(request.data) # As a stream
 
@@ -185,11 +185,11 @@ class MainClass(Resource):
     def post(self):
         refresh_token = request.form.get('refresh_token')
 
-        realm = Globals().get_env("REALM", "inherit")
-        client_id = Globals().get_env("CLIENT_ID", "minioapi")
-        client_secret = Globals().get_env("CLIENT_SECRET", "mIWTXyouXXnIuDOUrVs57AsP7uYrOOEL")
+        realm = Globals().get_env("REALM")
+        client_id = Globals().get_env("CLIENT_ID")
+        client_secret = Globals().get_env("CLIENT_SECRET")
 
-        issuer = Globals().get_env("ISSUER", "https://keycloak-inherit.euinno.eu")
+        issuer = Globals().get_env("ISSUER")
         issuer = f'{issuer}/realms/{realm}/protocol/openid-connect/token'
 
         payload = {

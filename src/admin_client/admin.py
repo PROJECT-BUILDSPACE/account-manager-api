@@ -7,12 +7,12 @@ from models import Group, Role, List, UserData, UserAttrs, UserRegistration
 class AdminClient():
     def __init__(self):
         # self.base = Globals().get_env("ISSUER", "http://minikube.local:30105/auth")
-        self.base = Globals().get_env("ISSUER", "https://keycloak-inherit.euinno.eu")
-        self.realm = Globals().get_env("REALM", "inherit")
+        self.base = Globals().get_env("ISSUER")
+        self.realm = Globals().get_env("REALM")
         self.token_path = '/realms/master/protocol/openid-connect/token'
-        self.admin_client = Globals().get_env("ADMIN_CLIENT", "admin-cli")
-        self.admin_uname = Globals().get_env("ADMIN_UNAME", "inherit")
-        self.admin_pwd = Globals().get_env("ADMIN_PWD", "4@8<lk4<iAhp&of")
+        self.admin_client = Globals().get_env("ADMIN_CLIENT")
+        self.admin_uname = Globals().get_env("ADMIN_UNAME")
+        self.admin_pwd = Globals().get_env("ADMIN_PWD")
         self.__master_token__ = 'Bearer ' + self.__get_master_token__()
 
     def __get_master_token__(self):
