@@ -1,3 +1,4 @@
+# TODO: Copy .env file from host machine to container's filesystem.
 FROM python:3.8
 
 # Set the working directory within the container

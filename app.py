@@ -11,6 +11,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from src.utils import Globals
 from src.namespaces import groupNamespace, roleNamespace, userNamespace
 from src.admin_client import AdminClient
+from dotenv import load_dotenv
+import logging
 
 app = Flask(__name__)
 
@@ -39,6 +41,13 @@ SWAGGER_BLEUPRNT = get_swaggerui_blueprint(
 
 app.register_blueprint(SWAGGER_BLEUPRNT, url_prefix = SWAGGER_URL)
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
+
+# Load environment variables from .env file.
+env_path=".env"
+load_dotenv(dotenv_path=env_path)
+logger.info("Env variables loaded.")
 
 if os.environ.get('HTTPS'):
     @property

@@ -16,6 +16,7 @@ groupNamespace = Namespace('group')
 parser = reqparse.RequestParser()
 # parser.add_argument('skip', type=int, help='skip tasks')
 
+# TODO: Create a group called 'group-admin' on app startup if not already created.
 
 @groupNamespace.route('/all', methods=['GET'])
 class MainClass(Resource):
