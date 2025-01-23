@@ -1,3 +1,4 @@
 from src.namespaces.group_namespace import groupNamespace
 from src.namespaces.role_namespace import roleNamespace
 from src.namespaces.user_namespace import userNamespace
+from src.namespaces.share_namespace import shareNamespace

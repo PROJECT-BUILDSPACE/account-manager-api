@@ -16,7 +16,15 @@ class JoinGroupBody(BaseModel):
     users: List[Dict[str, Administrator]]
 
 class UserAttrs(BaseModel):
-    occupation: Optional[List[str]]
-    affiliation: Optional[List[str]]
-    country: Optional[List[str]]
-    city: Optional[List[str]]
+    occupation: Optional[List[str]] = None
+    affiliation: Optional[List[str]] = None
+    country: Optional[List[str]] = None
+    city: Optional[List[str]] = None
+    editor_in_user_attr: Optional[List[str]] = None
+    viewer_in_user_attr: Optional[List[str]] = None
+
+
+class SharingInput(BaseModel):
+    folder_id: str
+    target_organization_name: str
+    rights: Optional[str] = None

@@ -32,6 +32,7 @@ class MainClass(Resource):
 
         return user_data, 200
 
+    # Expects {'attributes': UserAttrs}
     @authentication
     def put(self):
         try:
@@ -40,8 +41,8 @@ class MainClass(Resource):
             return RespondWithError(400, "Could not resolve payload.", str(e), "GRP0001")
 
         if len(body.keys()) > 1:
-            return RespondWithError(e.args[1], "Mixed content on update. Update either the password or the attributes.",
-                                    e.args[0], "USR0002")
+            return RespondWithError(400, "Mixed content on update.",
+                                    "Update either the password or the attributes.", "USR0002")
         # elif list(body.keys())[0] == 'attributes':
         elif 'attributes' in list(body.keys()):
             try:

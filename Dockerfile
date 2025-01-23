@@ -7,8 +7,11 @@ WORKDIR /api
 # Copy the requirements.txt file into the container at /app
 COPY requirements /api/
 
+# Update pip to latest version
+RUN pip install --upgrade pip
+
 # Install any needed packages specified in requirements.txt
-RUN pip install -r requirements
+RUN pip install -r ./requirements
 
 # Copy the rest of your application's source code to the container
 COPY . /api

@@ -169,8 +169,16 @@ class AdminClient():
         except:
             raise ConnectionError('Not valid attributes', 400)
 
-        payload = {"attributes": attributes}
-        response = requests.put(self.base + f'/admin/realms/{self.realm}/users/{user_id}', json=payload, headers=headers)
+        current_attrs = requests.get(self.base + f'/admin/realms/{self.realm}/users/{user_id}', headers=headers)
+        current_attrs = current_attrs.json()#['attributes']
+
+        if 'attributes' in current_attrs.keys():
+            for key, value in attributes.items():
+                current_attrs['attributes'][key] = value
+        else:
+            current_attrs['attributes'] = attributes
+
+        response = requests.put(self.base + f'/admin/realms/{self.realm}/users/{user_id}', json=current_attrs, headers=headers)
         if response.status_code >= 300:
             raise ConnectionError('Could not update user attributes.', response.status_code)
         return response

@@ -12,4 +12,3 @@ cryptography
 httplib2
 minio
 python-dotenv
-logging

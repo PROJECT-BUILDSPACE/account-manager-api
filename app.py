@@ -9,14 +9,14 @@ import os
 import json
 from werkzeug.middleware.proxy_fix import ProxyFix
 from src.utils import Globals
-from src.namespaces import groupNamespace, roleNamespace, userNamespace
+from src.namespaces import groupNamespace, roleNamespace, userNamespace, shareNamespace
 from src.admin_client import AdminClient
 from dotenv import load_dotenv
 import logging
 
 app = Flask(__name__)
 
-CORS(app, origins=['http://localhost:4200', 'http://localhost:4200/*'])
+CORS(app, origins=['http://localhost:4200', 'http://localhost:4200/*', "http://teide:8131", "https://tools.cartif.es/buildspace"])
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
@@ -40,13 +40,17 @@ SWAGGER_BLEUPRNT = get_swaggerui_blueprint(
 )
 
 app.register_blueprint(SWAGGER_BLEUPRNT, url_prefix = SWAGGER_URL)
+# Load environment variables from .env file.
+env_path="./env-files/prod/.env"
+load_dotenv(dotenv_path=env_path)
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
+debug = Globals().get_env("DEBUG")
+if debug == "true":
+    logging.basicConfig(level=logging.DEBUG, handlers=[logging.StreamHandler()])
+else:
+    logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler()])
 
-# Load environment variables from .env file.
-env_path=".env"
-load_dotenv(dotenv_path=env_path)
 logger.info("Env variables loaded.")
 
 if os.environ.get('HTTPS'):
@@ -63,6 +67,7 @@ manager_api = Api(app=app, version='1.0'
 manager_api.add_namespace(groupNamespace)
 manager_api.add_namespace(roleNamespace)
 manager_api.add_namespace(userNamespace)
+manager_api.add_namespace(shareNamespace)
 
 # manager_api.init_app(app=app, add_specs=False)
 if __name__ == "__main__":
