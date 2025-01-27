@@ -32,9 +32,8 @@ class MainClass(Resource):
         except Exception as err:
             return RespondWithError(err.args[1], "Could not getch role.",
                                     err.args[0], "GRP0001")
-        test_value = {group_id: role.attributes.pop(group_id)}
         # print(f"test_value: {test_value}")
-        return test_value, 200
+        return  {group_id: role.attributes.pop(group_id)}, 200
 
     @authentication
     @admin_authority
