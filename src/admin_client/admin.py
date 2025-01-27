@@ -96,8 +96,10 @@ class AdminClient():
         headers = {'Authorization': self.__master_token__}
 
         response = requests.get(self.base + f'/admin/realms/{self.realm}/roles/{role_name}', headers=headers)
+        # print("response:", response.json())
         if response.status_code < 300:
-            role = Role.parse_obj(response.json())
+            role = Role.model_validate(response.json())
+            # print(f"role: {role}")
         else:
             raise ConnectionError('Could not get role.', response.status_code)
         return role
